@@ -1,0 +1,468 @@
+openapi: 3.0.0
+info:
+  title: magalog
+  version: '1.0'
+  contact:
+    name: Mateus
+    email: mateus.flavio@luizalabs.com
+  description: ''
+servers:
+  - url: 'http://stage.apiluiza.com/v1'
+paths:
+  /shippings/tracking:
+    post:
+      summary: ''
+      operationId: post-shippings-tracking
+      description: Envi ode evento do package.id
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: content-type
+          required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/model-v1-origin-post-shipping'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-v1-post-error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error-v1-post-error'
+              examples:
+                Erro não autorizado:
+                  value:
+                    developerMessage: Unauthorized - make sure the header parameter Authorization is valid
+                    userMessage: You are not authorized to perform this operation
+                    errorCode: 30001
+                    moreInfo: 'http://developer.apiluiza.com.br/docs/errors/30001'
+      security:
+        - Auhtorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/v1-post-shipping'
+components:
+  schemas:
+    v1-post-shipping:
+      type: object
+      title: ''
+      properties:
+        order:
+          type: object
+          properties:
+            id:
+              type: integer
+            seller:
+              type: object
+              properties:
+                id:
+                  type: integer
+            sale:
+              type: object
+              properties:
+                place:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    description:
+                      type: string
+                  required:
+                    - id
+                    - description
+        packages:
+          type: array
+          items:
+            $ref: '#/components/schemas/model-v1-package-post-shipping'
+    model-v1-invoice-post-shipping:
+      title: v1-invoice-post-shipping
+      type: object
+      properties:
+        key:
+          type: string
+        number:
+          type: string
+        serie:
+          type: string
+        issueDate:
+          type: string
+        amount:
+          type: object
+          required:
+            - total
+            - items
+          properties:
+            total:
+              type: string
+            items:
+              type: string
+        cte:
+          type: object
+          properties:
+            key:
+              type: string
+            issueDate:
+              type: string
+        carrier:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            cnpj:
+              type: string
+        issuer:
+          type: object
+          properties:
+            cnpj:
+              type: string
+            ie:
+              type: string
+            name:
+              type: string
+            tradingName:
+              type: string
+            address:
+              type: object
+              properties:
+                zipcode:
+                  type: string
+                street:
+                  type: string
+                number:
+                  type: string
+                complement:
+                  type: string
+                district:
+                  type: string
+                city:
+                  type: string
+                state:
+                  type: string
+                country:
+                  type: string
+                ibgeCode:
+                  type: integer
+        cfop:
+          type: string
+        icms:
+          type: string
+        icmsSubstituion:
+          type: string
+        baseIcms:
+          type: string
+        baseIcmsSubstituion:
+          type: string
+        '':
+          type: string
+      required:
+        - key
+        - number
+        - serie
+        - issueDate
+        - amount
+    model-v1-package-post-shipping:
+      title: v1-package-post-shipping
+      type: object
+      x-examples: {}
+      properties:
+        id:
+          type: string
+        deliveryService:
+          type: object
+          properties:
+            id:
+              type: integer
+            description:
+              type: string
+          required:
+            - id
+            - description
+        packingList:
+          type: object
+          properties:
+            id:
+              type: integer
+        deadLine:
+          type: object
+          properties:
+            date:
+              type: string
+            period:
+              type: string
+          required:
+            - date
+        shipping:
+          type: string
+        volumes:
+          type: array
+          items:
+            type: object
+            properties:
+              weight:
+                type: string
+              height:
+                type: string
+              width:
+                type: string
+              length:
+                type: string
+              label:
+                type: object
+                properties:
+                  barcode:
+                    type: string
+              products:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    description:
+                      type: string
+                    weight:
+                      type: string
+                    height:
+                      type: string
+                    width:
+                      type: string
+                    length:
+                      type: string
+                    category:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        description:
+                          type: string
+                  required:
+                    - id
+                    - description
+                    - weight
+                    - height
+                    - width
+                    - length
+            required:
+              - weight
+              - height
+              - width
+              - length
+        invoice:
+          $ref: '#/components/schemas/model-v1-invoice-post-shipping'
+        origin:
+          $ref: '#/components/schemas/model-v1-origin-post-shipping'
+        destination:
+          $ref: '#/components/schemas/model-v1-destination-post-shipping'
+      required:
+        - id
+        - volumes
+    model-v1-origin-post-shipping:
+      title: v1-origin-post-shipping
+      type: object
+      properties:
+        seller:
+          type: object
+          properties:
+            id:
+              type: string
+          required:
+            - id
+        pickupPlace:
+          type: object
+          properties:
+            distributionCenter:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                cnpj:
+                  type: string
+                ie:
+                  type: string
+            store:
+              type: object
+              properties:
+                id:
+                  type: string
+                email:
+                  type: string
+                cnpj:
+                  type: string
+                ie:
+                  type: string
+                '':
+                  type: string
+            customer:
+              type: object
+              properties:
+                name:
+                  type: string
+                rg:
+                  type: string
+                cpf:
+                  type: string
+                ie:
+                  type: string
+        phones:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              number:
+                type: string
+        address:
+          type: object
+          properties:
+            zipcode:
+              type: string
+            street:
+              type: string
+            number:
+              type: string
+            complement:
+              type: string
+            district:
+              type: string
+            city:
+              type: string
+            state:
+              type: string
+            country:
+              type: string
+            ibgeCode:
+              type: string
+          required:
+            - zipcode
+            - street
+            - number
+            - district
+            - city
+            - state
+            - country
+    model-v1-destination-post-shipping:
+      title: v1-destination-post-shipping
+      type: object
+      properties:
+        properties: {}
+        seller:
+          type: object
+          properties:
+            id:
+              type: string
+          required:
+            - id
+        pickupPlace:
+          type: object
+          properties:
+            distributionCenter:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                cnpj:
+                  type: string
+                ie:
+                  type: string
+            store:
+              type: object
+              properties:
+                id:
+                  type: string
+                email:
+                  type: string
+                cnpj:
+                  type: string
+                ie:
+                  type: string
+                '':
+                  type: string
+            customer:
+              type: object
+              properties:
+                name:
+                  type: string
+                rg:
+                  type: string
+                cpf:
+                  type: string
+                ie:
+                  type: string
+        phones:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              number:
+                type: string
+        address:
+          type: object
+          properties:
+            zipcode:
+              type: string
+            street:
+              type: string
+            number:
+              type: string
+            complement:
+              type: string
+            district:
+              type: string
+            city:
+              type: string
+            state:
+              type: string
+            country:
+              type: string
+            ibgeCode:
+              type: string
+            reference:
+              type: string
+          required:
+            - zipcode
+            - street
+            - district
+            - country
+    error-v1-post-error:
+      title: v1-post-error
+      type: object
+      properties:
+        developerMessage:
+          type: string
+        userMessage:
+          type: string
+        errorCode:
+          type: integer
+        moreInfo:
+          type: string
+      description: Resposta em caso de erro
+  securitySchemes:
+    Auhtorization:
+      name: Bearer token
+      type: apiKey
+      in: header

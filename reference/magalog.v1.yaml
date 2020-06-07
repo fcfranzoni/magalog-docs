@@ -1,22 +1,30 @@
 openapi: 3.0.0
 info:
-  title: magalog
+  title: Transport Request
   version: '1.0'
   contact:
     name: Mateus
     email: mateus.flavio@luizalabs.com
-  description: ''
+  description: |
+    Através dessa operação o Magazine Luiza irá solicitar junto à transportadora, ações de coleta e entrega de pedidos.
+    Um pedido é composto de um ou mais pacotes, assim como um pacote é composto de um ou mais produtos.
 servers:
-  - url: 'http://stage.apiluiza.com/v1'
+  - url: 'https://{hostname}'
 paths:
-  /shippings/tracking:
+  /v1/transportrequests:
     post:
       summary: ''
-      operationId: post-shippings-tracking
-      description: Envi ode evento do package.id
+      operationId: /v1/transportrequests
+      description: |-
+        Através dessa operação o Magazine Luiza irá solicitar junto à transportadora, ações de coleta e entrega de pedidos.
+        Um pedido é composto de um ou mais pacotes, assim como um pacote é composto de um ou mais produtos.
+
+        Exemplo de Curl:
+        curl -X POST -H 'authorization: {authorization}' -H 'content-type: application/json' -d '{body}' 'https://{hostname}/v1/transportrequests'
       parameters:
         - schema:
             type: string
+            default: application/json
           in: header
           name: content-type
           required: true
@@ -26,7 +34,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/model-v1-origin-post-shipping'
+                $ref: '#/components/schemas/model-v1-order-shipping'
         '401':
           description: Unauthorized
           content:
@@ -52,10 +60,35 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/v1-post-shipping'
+              $ref: '#/components/schemas/model-v1-order-shipping'
+        description: ''
+    parameters: []
+  v1/shippings/tracking:
+    post:
+      summary: Shipping POST
+      tags: []
+      responses: {}
+      operationId: v1/shippings/tracking
+      description: ''
+      security:
+        - Auhtorization: []
+      parameters:
+        - schema:
+            type: string
+            default: application/json
+          in: header
+          name: Content-Type
+          required: true
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: object
+        description: ''
+    parameters: []
 components:
   schemas:
-    v1-post-shipping:
+    model-v1-order-shipping:
       type: object
       title: ''
       properties:
@@ -64,11 +97,14 @@ components:
           properties:
             id:
               type: integer
+              default: 123
+              description: 'NUMPEDPRINC|strPedido_cli'
             seller:
               type: object
               properties:
                 id:
                   type: integer
+                  description: 'magazineluiza|casaamerica'
             sale:
               type: object
               properties:
@@ -79,6 +115,7 @@ components:
                       type: number
                     description:
                       type: string
+                      description: 'Fisico | Digital'
                   required:
                     - id
                     - description
@@ -98,6 +135,7 @@ components:
           type: string
         issueDate:
           type: string
+          description: YYYY-MM-DD
         amount:
           type: object
           required:
@@ -106,8 +144,10 @@ components:
           properties:
             total:
               type: string
+              description: '000.00'
             items:
               type: string
+              description: '000.00'
         cte:
           type: object
           properties:
@@ -115,6 +155,7 @@ components:
               type: string
             issueDate:
               type: string
+              description: YYYY-MM-DD
         carrier:
           type: object
           properties:
@@ -152,8 +193,10 @@ components:
                   type: string
                 state:
                   type: string
+                  description: XX
                 country:
                   type: string
+                  description: XX
                 ibgeCode:
                   type: integer
         cfop:
@@ -178,9 +221,11 @@ components:
       title: v1-package-post-shipping
       type: object
       x-examples: {}
+      description: ''
       properties:
         id:
           type: string
+          description: 'NUMPEDVEN|package_id_site'
         deliveryService:
           type: object
           properties:
@@ -188,6 +233,7 @@ components:
               type: integer
             description:
               type: string
+              description: Expressa
           required:
             - id
             - description
@@ -201,6 +247,7 @@ components:
           properties:
             date:
               type: string
+              description: YYYY-MM-DD
             period:
               type: string
           required:
@@ -214,12 +261,16 @@ components:
             properties:
               weight:
                 type: string
+                description: 00.00 KG
               height:
                 type: string
+                description: 000 cm
               width:
                 type: string
+                description: 000 cm
               length:
                 type: string
+                description: 000 cm
               label:
                 type: object
                 properties:
@@ -236,12 +287,16 @@ components:
                       type: string
                     weight:
                       type: string
+                      description: 00.00 kg
                     height:
                       type: string
+                      description: 000 cm
                     width:
                       type: string
+                      description: 000 cm
                     length:
                       type: string
+                      description: 000 cm
                     category:
                       type: object
                       properties:
@@ -249,6 +304,8 @@ components:
                           type: integer
                         description:
                           type: string
+                    '':
+                      type: string
                   required:
                     - id
                     - description

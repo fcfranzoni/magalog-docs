@@ -17,7 +17,7 @@ paths:
       operationId: /v1/transportrequests
       description: |-
         Através dessa operação o Magazine Luiza irá solicitar junto à transportadora, ações de coleta e entrega de pedidos.
-        Um pedido é composto de um ou mais pacotes, assim como um pacote é composto de um ou mais produtos.
+        Um pedido é composto de um ou mais pacotes, assim como um pacote é composto de um ou mais produtos!
 
         Exemplo de Curl:
         curl -X POST -H 'authorization: {authorization}' -H 'content-type: application/json' -d '{body}' 'https://{hostname}/v1/transportrequests'
